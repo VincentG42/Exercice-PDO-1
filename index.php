@@ -22,10 +22,28 @@ $request = $database->query('SELECT * FROM `clients` LIMIt 20');
 
 $topTwentyClients = $request-> fetchAll();
 
-//request clients avec cardNumber
-$request = $database->query("SELECT * FROM `clients` WHERE `cardNumber` != 'null'");
+//request clients avec carte fidelite
+$request = $database->query("SELECT * FROM `clients` INNER JOIN cards ON clients.cardNumber = cards.cardNumber WHERE cardTypesId=1;");
 
 $clientswCards = $request-> fetchAll();
+
+// request clients Nom commence apr M
+$request = $database->query("SELECT * FROM `clients` WHERE lastName LIKE 'm%' ORDER BY lastName");
+
+$clientsbeginsWM = $request-> fetchAll();
+
+
+
+// request shows tri par artiste
+
+$request = $database->query("SELECT * FROM `shows` ORDER BY `performer`");
+
+$showsByPerformer = $request-> fetchAll();
+
+//request client inner join cards
+$request = $database->query("SELECT * FROM `clients` LEFT JOIN cards ON clients.cardNumber = cards.cardNumber");
+
+$clientsAvecCarte = $request-> fetchAll();
 
 
 
@@ -59,7 +77,7 @@ $clientswCards = $request-> fetchAll();
 
     ?>
 
-<h2> Exercice 2 </h2>
+<h2> Exercice 3 </h2>
 
     <ol>
     <?php 
@@ -70,25 +88,54 @@ $clientswCards = $request-> fetchAll();
     ?>
     </ol>  
 
-<h2> Exercice 3</h2>
-<!-- recup request exercice1-->
-        <?php 
-            foreach ($clients as $client){
-                if (!empty($client['cardNumber']))
-                echo '<p>' .$client['lastName'].' '.$client['firstName'].'</p>';
-            }
+<h2> Exercice 4 </h2>
 
-        ?>
-    <h3>2e option</h3>
         <!-- request specifique-->
         <?php 
             foreach ($clientswCards as $clientwCards){
             
                 echo '<p>' .$clientwCards['lastName'].' '.$clientwCards['firstName'].'</p>';
             }
-
         ?>
-clientswCards
-    
+<h2> Exercice 5 </h2>
+        <?php 
+            foreach ($clientsbeginsWM as $clientbeginWM){
+            
+                echo '<p>Nom: ' .$clientbeginWM['lastName'].' - Prénom: '.$clientbeginWM['firstName'].'</p>';
+            }
+        ?>
+
+<h2> Exercice 6 </h2>
+
+        <?php 
+            foreach ($showsByPerformer as $showByPerformer){
+            
+                echo '<p>' .$showByPerformer['title'].' par '.$showByPerformer['performer'].', le '.$showByPerformer['date'].' à '.$showByPerformer['startTime'].'</p>';
+            }
+        ?>
+<h2> Exercice 7 </h2>
+                <!-- recup request exercice1-->
+      <?php 
+            // foreach ($clients as $client){
+            //    
+            
+            // }
+                // var_dump($clientsAvecCarte);
+            foreach ($clientsAvecCarte as $clientaveccarte){
+                // var_dump($clientaveccarte);
+                echo '<p> Nom: '. $clientaveccarte['lastName'].' Prenom: '. $clientaveccarte['firstName'].'</p>';
+          
+                    if ($clientaveccarte['cardTypesId'] == 1){
+                        echo '<p> Carte: Oui</p>';
+                        echo '<p> N°: '. $clientaveccarte['cardNumber'].'</p>';
+                        echo '<hr>';
+                    } else{
+                        echo '<p> Carte: Non</p>';
+                        echo '<hr>';
+                    }
+            }
+        ?> 
+
+
 </body>
 </html>
